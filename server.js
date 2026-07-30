@@ -106,6 +106,28 @@ function updateState(serviceId, updates) {
   });
 }
 
+// Live RAM Resource Monitor for Active Bot Processes
+function pollResourceMetrics() {
+  if (activeProcesses.size === 0) return;
+  activeProcesses.forEach((child, serviceId) => {
+    if (!child || !child.pid) return;
+    exec(`tasklist /FI "PID eq ${child.pid}" /FO CSV /NH`, (err, stdout) => {
+      if (err || !stdout || stdout.includes('No tasks')) return;
+      const match = stdout.match(/"([^"]+)"\s*,\s*"(\d+)"\s*,\s*"([^"]+)"\s*,\s*"(\d+)"\s*,\s*"([^"]+)"/);
+      if (match && match[5]) {
+        const memKbStr = match[5].replace(/[^\d]/g, '');
+        const memKb = parseInt(memKbStr, 10);
+        if (!isNaN(memKb)) {
+          const ramMb = (memKb / 1024).toFixed(1);
+          updateState(serviceId, { ramMb: `${ramMb} MB` });
+        }
+      }
+    });
+  });
+}
+
+setInterval(pollResourceMetrics, 3000);
+
 // Process Management
 function startService(serviceId) {
   const config = servicesConfig.find(s => s.id === serviceId);

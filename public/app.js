@@ -171,10 +171,11 @@ function renderServices() {
     const status = s.state ? s.state.status : 'stopped';
     const isRunning = status === 'running';
     const uptimeStr = isRunning && s.state.startTime ? ` ⏱️ ${formatUptime(s.state.startTime)}` : '';
+    const ramStr = isRunning && s.state.ramMb ? ` | 🧠 ${s.state.ramMb}` : '';
 
     let statusPillHtml = '';
     if (status === 'running') {
-      statusPillHtml = `<span class="status-pill running"><span class="pulse-dot"></span> Работает (PID: ${s.state.pid})${uptimeStr}</span>`;
+      statusPillHtml = `<span class="status-pill running"><span class="pulse-dot"></span> Работает (PID: ${s.state.pid})${ramStr}${uptimeStr}</span>`;
     } else if (status === 'crashed') {
       statusPillHtml = `<span class="status-pill crashed">⚠️ Краш (Код: ${s.state.exitCode})</span>`;
     } else if (status === 'starting') {
