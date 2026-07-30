@@ -343,8 +343,6 @@ async function selectTerminal(id) {
   renderTerminalTabs();
   renderServices();
 
-  terminalOutput.innerHTML = `<div class="log-line log-system">⏳ Загрузка логов [${escapeHtml(s ? s.name : id)}]...</div>`;
-
   try {
     const res = await fetch(`/api/services/${id}/logs`);
     const logs = await res.json();
@@ -352,23 +350,28 @@ async function selectTerminal(id) {
     if (activeTerminalId !== id) return;
 
     terminalOutput.innerHTML = '';
-    if (logs.length === 0) {
+    if (!Array.isArray(logs) || logs.length === 0) {
       terminalOutput.innerHTML = `<div class="log-line log-system">=== Логи [${escapeHtml(s ? s.name : id)}] пока отсутствуют ===</div>`;
     } else {
       logs.forEach(log => appendLogToTerminal(log));
     }
   } catch (err) {
     console.error('Failed to load logs:', err);
+    terminalOutput.innerHTML = `<div class="log-line log-error">❌ Ошибка загрузки логов: ${escapeHtml(err.message)}</div>`;
   }
 }
 
 function appendLogToTerminal(log) {
+  if (!log) return;
   const div = document.createElement('div');
-  div.className = `log-line log-${log.type}`;
-  div.textContent = log.raw;
+  const type = (typeof log === 'object' && log.type) ? log.type : 'stdout';
+  const text = (typeof log === 'string') ? log : (log.raw || log.text || JSON.stringify(log));
+
+  div.className = `log-line log-${type}`;
+  div.textContent = text;
   terminalOutput.appendChild(div);
 
-  if (autoscrollCheck.checked) {
+  if (autoscrollCheck && autoscrollCheck.checked) {
     terminalOutput.scrollTop = terminalOutput.scrollHeight;
   }
 }
