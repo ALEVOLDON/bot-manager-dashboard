@@ -347,6 +347,7 @@ function openAddModal() {
   document.getElementById('form-category').value = 'Telegram Bot';
   document.getElementById('form-command').value = '';
   document.getElementById('form-cwd').value = '';
+  document.getElementById('form-webhook').value = '';
   document.getElementById('form-auto-restart').checked = true;
   document.getElementById('form-enabled').checked = true;
   modalBackdrop.classList.remove('hidden');
@@ -363,6 +364,7 @@ function openEditModal(id) {
   document.getElementById('form-category').value = s.category || '';
   document.getElementById('form-command').value = s.command;
   document.getElementById('form-cwd').value = s.cwd || '';
+  document.getElementById('form-webhook').value = s.webhookUrl || '';
   document.getElementById('form-auto-restart').checked = !!s.autoRestart;
   document.getElementById('form-enabled').checked = !!s.enabled;
   modalBackdrop.classList.remove('hidden');
@@ -382,6 +384,7 @@ serviceForm.addEventListener('submit', async (e) => {
     category: document.getElementById('form-category').value || 'Custom Task',
     command: document.getElementById('form-command').value,
     cwd: document.getElementById('form-cwd').value,
+    webhookUrl: document.getElementById('form-webhook').value,
     autoRestart: document.getElementById('form-auto-restart').checked,
     enabled: document.getElementById('form-enabled').checked
   };

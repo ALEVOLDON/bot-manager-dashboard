@@ -25,6 +25,34 @@ const serviceState = new Map();    // serviceId -> { status, pid, startTime, upt
 const manualStops = new Set();     // serviceId -> boolean (prevent auto-restart when manually stopped)
 const crashCounts = new Map();     // serviceId -> { count, lastCrashTime }
 
+function sendCrashNotification(serviceName, exitCode, webhookUrl) {
+  if (!webhookUrl) return;
+  try {
+    const url = new URL(webhookUrl);
+    const postData = JSON.stringify({
+      content: `⚠️ **Bot Launchpad Alert**: Service **${serviceName}** crashed with exit code \`${exitCode}\`.`,
+      text: `⚠️ Bot Launchpad Alert: Service ${serviceName} crashed with exit code ${exitCode}.`
+    });
+
+    const options = {
+      hostname: url.hostname,
+      port: url.port || (url.protocol === 'https:' ? 443 : 80),
+      path: url.pathname + url.search,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(postData)
+      }
+    };
+
+    const httpModule = url.protocol === 'https:' ? require('https') : require('http');
+    const req = httpModule.request(options);
+    req.on('error', () => {});
+    req.write(postData);
+    req.end();
+  } catch (e) {}
+}
+
 // Load configuration
 function loadServices() {
   try {
@@ -182,6 +210,10 @@ function startService(serviceId) {
         pid: null,
         exitCode: code
       });
+
+      if (isCrash) {
+        sendCrashNotification(config.name, code, config.webhookUrl);
+      }
 
       // Auto-restart handling ONLY if process crashed unexpectedly (not manually stopped)
       if (isCrash && config.autoRestart) {
