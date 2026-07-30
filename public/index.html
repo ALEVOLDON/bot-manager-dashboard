@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bot & Script Control Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0d1117">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar / Navigation Header -->
+    <header class="app-header">
+      <div class="logo-group">
+        <div class="logo-icon"><i data-lucide="cpu"></i></div>
+        <div class="logo-text">
+          <h1>Bot Launchpad</h1>
+          <span class="logo-subtitle">Центр управления ботами и скриптами Windows</span>
+        </div>
+      </div>
+
+      <div class="header-stats">
+        <div class="stat-badge stat-running">
+          <span class="stat-dot green"></span>
+          <span id="running-count">0</span> Запущено
+        </div>
+        <div class="stat-badge stat-total">
+          <span class="stat-dot blue"></span>
+          <span id="total-count">0</span> Всего
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-primary" id="btn-add-service">
+          <i data-lucide="plus"></i> Добавить новый бот / батник
+        </button>
+        <button class="btn btn-danger-ghost" id="btn-shutdown-all" title="Остановить всех ботов и полностью закрыть панель">
+          <i data-lucide="power"></i> Выключить всё
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-layout">
+      <!-- Grid of Services -->
+      <section class="services-section">
+        <div class="section-title">
+          <h2>Подключённые процессы и службы</h2>
+          <div class="section-title-right">
+            <input type="text" id="search-services" class="search-input" placeholder="🔍 Поиск бота...">
+            <span class="section-badge" id="services-summary">Загрузка...</span>
+          </div>
+        </div>
+
+        <div class="services-grid" id="services-grid">
+          <!-- Cards injected dynamically via app.js -->
+        </div>
+      </section>
+
+      <!-- Draggable Resizer Bar -->
+      <div class="resizer-bar" id="resizer-bar" title="Зажмите и перетащите мышью для изменения ширины панелей">
+        <div class="resizer-handle"></div>
+      </div>
+
+      <!-- Live Terminal / Console Panel -->
+      <section class="terminal-section">
+        <div class="terminal-header">
+          <div class="terminal-title">
+            <span class="terminal-dot red"></span>
+            <span class="terminal-dot yellow"></span>
+            <span class="terminal-dot green"></span>
+            <span class="terminal-name" id="current-terminal-title">Консоль логов (Выберите процесс)</span>
+          </div>
+
+          <div class="terminal-controls">
+            <label class="autoscroll-toggle">
+              <input type="checkbox" id="autoscroll-check" checked>
+              <span>Автопрокрутка</span>
+            </label>
+            <button class="btn-sm btn-ghost" id="btn-export-logs"><i data-lucide="download"></i> Скачать (.log)</button>
+            <button class="btn-sm btn-ghost" id="btn-copy-logs"><i data-lucide="copy"></i> Копировать</button>
+            <button class="btn-sm btn-danger-ghost" id="btn-clear-logs"><i data-lucide="trash-2"></i> Очистить</button>
+          </div>
+        </div>
+
+        <div class="terminal-body" id="terminal-output">
+          <div class="log-line log-system">=== Нажмите "Логи" на карточке любого бота для трансляции в реальном времени ===</div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal: Add / Edit Service -->
+    <div class="modal-backdrop hidden" id="service-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="modal-title">Добавить процесс / батник</h3>
+          <button class="modal-close" id="modal-close-btn">&times;</button>
+        </div>
+
+        <form id="service-form" class="modal-form">
+          <input type="hidden" id="service-id">
+
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label for="form-name">Название задачи / бота *</label>
+              <input type="text" id="form-name" placeholder="Например: Telegram Bot / Deploy Script" required>
+            </div>
+            <div class="form-group flex-1">
+              <label for="form-icon">Иконка (Emoji)</label>
+              <input type="text" id="form-icon" placeholder="🤖" value="⚡">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="form-category">Категория</label>
+            <input type="text" id="form-category" placeholder="Telegram Bot, Batch Script, Python Service...">
+          </div>
+
+          <div class="form-group">
+            <label for="form-command">Команда запуска (Command) *</label>
+            <input type="text" id="form-command" placeholder="npm start ИЛИ python bot.py ИЛИ cmd /c script.bat" required>
+          </div>
+
+          <div class="form-group">
+            <label for="form-cwd">Рабочая директория (CWD)</label>
+            <input type="text" id="form-cwd" placeholder="C:\Users\alevo\Desktop\my-bot">
+          </div>
+
+          <div class="form-options">
+            <label class="checkbox-option">
+              <input type="checkbox" id="form-auto-restart" checked>
+              <span>Перезапускать автоматически при краше (Auto-restart)</span>
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" id="form-enabled" checked>
+              <span>Включен</span>
+            </label>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" id="modal-cancel-btn">Отмена</button>
+            <button type="submit" class="btn btn-primary" id="modal-save-btn">Сохранить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
