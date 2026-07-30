@@ -154,6 +154,30 @@ function pollResourceMetrics() {
   });
 }
 
+// Scheduler timer checking every 60 seconds
+function checkScheduledTasks() {
+  const now = new Date();
+  const currentHour = now.getHours();
+  const currentMinute = now.getMinutes();
+
+  servicesConfig.forEach(s => {
+    if (!s.enabled || !s.scheduleTime) return;
+    const parts = s.scheduleTime.split(':');
+    if (parts.length === 2) {
+      const targetHour = parseInt(parts[0], 10);
+      const targetMin = parseInt(parts[1], 10);
+      if (currentHour === targetHour && currentMinute === targetMin) {
+        if (!activeProcesses.has(s.id)) {
+          appendLog(s.id, `⏰ Scheduled auto-start triggered (${s.scheduleTime})`, 'system');
+          try { startService(s.id); } catch (e) {}
+        }
+      }
+    }
+  });
+}
+
+setInterval(checkScheduledTasks, 60000);
+
 setInterval(pollResourceMetrics, 3000);
 
 // Process Management

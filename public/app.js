@@ -399,6 +399,7 @@ function openAddModal() {
   document.getElementById('form-command').value = '';
   document.getElementById('form-cwd').value = '';
   document.getElementById('form-webhook').value = '';
+  document.getElementById('form-schedule').value = '';
   document.getElementById('form-auto-restart').checked = true;
   document.getElementById('form-enabled').checked = true;
   modalBackdrop.classList.remove('hidden');
@@ -416,6 +417,7 @@ function openEditModal(id) {
   document.getElementById('form-command').value = s.command;
   document.getElementById('form-cwd').value = s.cwd || '';
   document.getElementById('form-webhook').value = s.webhookUrl || '';
+  document.getElementById('form-schedule').value = s.scheduleTime || '';
   document.getElementById('form-auto-restart').checked = !!s.autoRestart;
   document.getElementById('form-enabled').checked = !!s.enabled;
   modalBackdrop.classList.remove('hidden');
@@ -436,6 +438,7 @@ serviceForm.addEventListener('submit', async (e) => {
     command: document.getElementById('form-command').value,
     cwd: document.getElementById('form-cwd').value,
     webhookUrl: document.getElementById('form-webhook').value,
+    scheduleTime: document.getElementById('form-schedule').value,
     autoRestart: document.getElementById('form-auto-restart').checked,
     enabled: document.getElementById('form-enabled').checked
   };
