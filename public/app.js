@@ -217,6 +217,7 @@ function renderServices() {
           <button class="btn btn-sm ${isSelected ? 'btn-primary' : 'btn-ghost'}" onclick="selectTerminal('${s.id}')">
             <i data-lucide="terminal"></i> Логи
           </button>
+          <button class="btn btn-sm btn-ghost" onclick="openEnvModal('${s.id}')"><i data-lucide="key"></i> .env</button>
           <button class="btn btn-sm btn-ghost" onclick="openEditModal('${s.id}')"><i data-lucide="settings"></i></button>
           <button class="btn btn-sm btn-danger-ghost" onclick="deleteService('${s.id}')"><i data-lucide="trash-2"></i></button>
         </div>
@@ -463,6 +464,59 @@ serviceForm.addEventListener('submit', async (e) => {
     alert('Ошибка сохранения: ' + err.message);
   }
 });
+
+// .env Editor Modal Logic
+const envModal = document.getElementById('env-modal');
+const envModalCloseBtn = document.getElementById('env-modal-close-btn');
+const envModalCancelBtn = document.getElementById('env-modal-cancel-btn');
+const envModalSaveBtn = document.getElementById('env-modal-save-btn');
+const envEditorTextarea = document.getElementById('env-content-editor');
+const envPathHint = document.getElementById('env-path-hint');
+const envServiceIdInput = document.getElementById('env-service-id');
+
+if (envModalCloseBtn) envModalCloseBtn.addEventListener('click', closeEnvModal);
+if (envModalCancelBtn) envModalCancelBtn.addEventListener('click', closeEnvModal);
+
+async function openEnvModal(id) {
+  const s = services.find(x => x.id === id);
+  if (!s) return;
+
+  envServiceIdInput.value = id;
+  envPathHint.textContent = `Загрузка .env файла...`;
+  envEditorTextarea.value = '';
+  envModal.classList.remove('hidden');
+
+  try {
+    const res = await fetch(`/api/services/${id}/env`);
+    const data = await res.json();
+    envPathHint.textContent = `Путь к файлу: ${data.envPath}`;
+    envEditorTextarea.value = data.content || '# Введите переменные окружения в формате KEY=VALUE\n';
+  } catch (err) {
+    envPathHint.textContent = 'Ошибка загрузки .env файла';
+  }
+}
+
+function closeEnvModal() {
+  if (envModal) envModal.classList.add('hidden');
+}
+
+if (envModalSaveBtn) {
+  envModalSaveBtn.addEventListener('click', async () => {
+    const id = envServiceIdInput.value;
+    const content = envEditorTextarea.value;
+    try {
+      await fetch(`/api/services/${id}/env`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content })
+      });
+      alert('Файл .env успешно сохранён!');
+      closeEnvModal();
+    } catch (err) {
+      alert('Ошибка сохранения .env: ' + err.message);
+    }
+  });
+}
 
 // Helper
 function escapeHtml(str) {

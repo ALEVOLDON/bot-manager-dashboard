@@ -687,6 +687,24 @@ svg[data-lucide],
   cursor: pointer;
 }
 
+.env-editor-textarea {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--accent-cyan);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  padding: 0.8rem;
+  resize: vertical;
+}
+
+.env-editor-textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+}
+
 .modal-form {
   display: flex;
   flex-direction: column;

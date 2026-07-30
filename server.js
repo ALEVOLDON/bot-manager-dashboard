@@ -375,6 +375,42 @@ app.delete('/api/services/:id', (req, res) => {
   res.json({ success: true });
 });
 
+// Get .env file content for service
+app.get('/api/services/:id/env', (req, res) => {
+  const { id } = req.params;
+  const config = servicesConfig.find(s => s.id === id);
+  if (!config) return res.status(404).json({ error: 'Service not found' });
+
+  const envPath = path.join(config.cwd || process.cwd(), '.env');
+  try {
+    if (fs.existsSync(envPath)) {
+      const content = fs.readFileSync(envPath, 'utf-8');
+      res.json({ exists: true, content, envPath });
+    } else {
+      res.json({ exists: false, content: '', envPath });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Save .env file content for service
+app.post('/api/services/:id/env', (req, res) => {
+  const { id } = req.params;
+  const { content } = req.body;
+  const config = servicesConfig.find(s => s.id === id);
+  if (!config) return res.status(404).json({ error: 'Service not found' });
+
+  const envPath = path.join(config.cwd || process.cwd(), '.env');
+  try {
+    fs.writeFileSync(envPath, content || '', 'utf-8');
+    appendLog(id, `🔑 .env file updated via dashboard`, 'system');
+    res.json({ success: true, envPath });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Start service
 app.post('/api/services/:id/start', (req, res) => {
   try {

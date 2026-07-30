@@ -164,6 +164,28 @@
         </form>
       </div>
     </div>
+
+    <!-- Modal: .env Editor -->
+    <div class="modal-backdrop hidden" id="env-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="env-modal-title">Редактор .env файлов</h3>
+          <button class="modal-close" id="env-modal-close-btn">&times;</button>
+        </div>
+
+        <div class="modal-form">
+          <input type="hidden" id="env-service-id">
+          <p class="env-path-hint" id="env-path-hint" style="font-size: 0.8rem; color: var(--accent-cyan); margin-bottom: 0.5rem;"></p>
+          <div class="form-group">
+            <textarea id="env-content-editor" class="env-editor-textarea" rows="12" placeholder="KEY=VALUE..."></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" id="env-modal-cancel-btn">Отмена</button>
+            <button type="button" class="btn btn-primary" id="env-modal-save-btn">Сохранить .env</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="app.js"></script>
