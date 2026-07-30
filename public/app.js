@@ -303,8 +303,9 @@ function renderTerminalTabs() {
     const isActive = activeTerminalId === id;
     tab.className = `tab-item ${isActive ? 'active' : ''}`;
     
+    tab.onclick = () => selectTerminal(s.id);
     tab.innerHTML = `
-      <span class="tab-title" onclick="selectTerminal('${s.id}')">${s.icon || '⚡'} ${escapeHtml(s.name)}</span>
+      <span class="tab-title">${s.icon || '⚡'} ${escapeHtml(s.name)}</span>
       <span class="tab-close" onclick="closeTerminalTab(event, '${s.id}')">&times;</span>
     `;
 
@@ -342,13 +343,17 @@ async function selectTerminal(id) {
   renderTerminalTabs();
   renderServices();
 
+  terminalOutput.innerHTML = `<div class="log-line log-system">⏳ Загрузка логов [${escapeHtml(s ? s.name : id)}]...</div>`;
+
   try {
     const res = await fetch(`/api/services/${id}/logs`);
     const logs = await res.json();
-    terminalOutput.innerHTML = '';
+    
+    if (activeTerminalId !== id) return;
 
+    terminalOutput.innerHTML = '';
     if (logs.length === 0) {
-      terminalOutput.innerHTML = '<div class="log-line log-system">=== Логи пока отсутствуют ===</div>';
+      terminalOutput.innerHTML = `<div class="log-line log-system">=== Логи [${escapeHtml(s ? s.name : id)}] пока отсутствуют ===</div>`;
     } else {
       logs.forEach(log => appendLogToTerminal(log));
     }
