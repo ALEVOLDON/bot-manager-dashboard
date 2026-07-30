@@ -445,6 +445,12 @@ app.post('/api/services/:id/restart', (req, res) => {
   }, 1000);
 });
 
+// Get logs for service
+app.get('/api/services/:id/logs', (req, res) => {
+  const logs = serviceLogs.get(req.params.id) || [];
+  res.json(logs);
+});
+
 // Clear logs for service
 app.post('/api/services/:id/clear-logs', (req, res) => {
   serviceLogs.set(req.params.id, []);
