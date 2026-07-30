@@ -1,0 +1,15 @@
+{
+  "name": "bot-manager-dashboard",
+  "version": "1.0.0",
+  "description": "Windows Process Launcher and Live Control Panel for Telegram/Discord bots and scripts",
+  "main": "main.js",
+  "scripts": {
+    "start": "node server.js",
+    "app": "node main.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "ws": "^8.17.1"
+  }
+}

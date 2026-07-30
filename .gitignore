@@ -1,0 +1,4 @@
+node_modules/
+*.log
+.qodo/
+test_suite.js
