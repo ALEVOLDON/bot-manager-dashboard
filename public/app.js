@@ -280,14 +280,65 @@ async function deleteService(id) {
   }
 }
 
+let openTerminalTabs = [];
+
+function renderTerminalTabs() {
+  const tabsBar = document.getElementById('terminal-tabs-bar');
+  if (!tabsBar) return;
+
+  if (openTerminalTabs.length === 0) {
+    tabsBar.style.display = 'none';
+    return;
+  }
+
+  tabsBar.style.display = 'flex';
+  tabsBar.innerHTML = '';
+
+  openTerminalTabs.forEach(id => {
+    const s = services.find(x => x.id === id);
+    if (!s) return;
+
+    const tab = document.createElement('div');
+    const isActive = activeTerminalId === id;
+    tab.className = `tab-item ${isActive ? 'active' : ''}`;
+    
+    tab.innerHTML = `
+      <span class="tab-title" onclick="selectTerminal('${s.id}')">${s.icon || '⚡'} ${escapeHtml(s.name)}</span>
+      <span class="tab-close" onclick="closeTerminalTab(event, '${s.id}')">&times;</span>
+    `;
+
+    tabsBar.appendChild(tab);
+  });
+}
+
+function closeTerminalTab(event, id) {
+  event.stopPropagation();
+  openTerminalTabs = openTerminalTabs.filter(x => x !== id);
+  if (activeTerminalId === id) {
+    if (openTerminalTabs.length > 0) {
+      selectTerminal(openTerminalTabs[openTerminalTabs.length - 1]);
+    } else {
+      activeTerminalId = null;
+      terminalTitle.textContent = 'Консоль логов (Выберите процесс)';
+      terminalOutput.innerHTML = '<div class="log-line log-system">=== Нажмите "Логи" на карточке любого бота ===</div>';
+      renderServices();
+    }
+  }
+  renderTerminalTabs();
+}
+
 // Select terminal to display logs
 async function selectTerminal(id) {
+  if (!openTerminalTabs.includes(id)) {
+    openTerminalTabs.push(id);
+  }
   activeTerminalId = id;
   const s = services.find(x => x.id === id);
 
   if (s) {
     terminalTitle.textContent = `${s.icon || '⚡'} Логи: ${s.name}`;
   }
+  renderTerminalTabs();
   renderServices();
 
   try {
