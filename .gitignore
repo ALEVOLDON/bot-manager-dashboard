@@ -1,7 +1,28 @@
+# Dependencies
 node_modules/
-*.log
-.qodo/
-*.lnk
-test_suite.js
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+
+# Local service configurations (Personal data & paths)
 config/services.json
 !config/services.json.example
+
+# Logs & Database files
+*.log
+*.sqlite
+*.db
+
+# Windows Shortcuts & OS files
+*.lnk
+.qodo/
+.DS_Store
+Thumbs.db
+
+# Test suites
+test_suite.js
