@@ -1,4 +1,7 @@
 node_modules/
 *.log
 .qodo/
+*.lnk
 test_suite.js
+config/services.json
+!config/services.json.example

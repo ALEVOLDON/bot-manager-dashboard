@@ -56,6 +56,13 @@ function sendCrashNotification(serviceName, exitCode, webhookUrl) {
 // Load configuration
 function loadServices() {
   try {
+    if (!fs.existsSync(CONFIG_PATH)) {
+      const examplePath = path.join(__dirname, 'config', 'services.json.example');
+      if (fs.existsSync(examplePath)) {
+        fs.copyFileSync(examplePath, CONFIG_PATH);
+      }
+    }
+
     if (fs.existsSync(CONFIG_PATH)) {
       const raw = fs.readFileSync(CONFIG_PATH, 'utf-8');
       servicesConfig = JSON.parse(raw);

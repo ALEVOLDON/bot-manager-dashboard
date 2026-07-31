@@ -1,0 +1,35 @@
+[
+  {
+    "id": "telegram-bot-demo",
+    "name": "Sample Telegram Bot",
+    "category": "Telegram Bot",
+    "cwd": "./sample-bot",
+    "command": "npm start",
+    "icon": "🤖",
+    "autoStart": false,
+    "autoRestart": true,
+    "enabled": true
+  },
+  {
+    "id": "ngrok-tunnel-demo",
+    "name": "ngrok Tunnel Demo",
+    "category": "Network / Webhook",
+    "cwd": ".",
+    "command": "ngrok http 3000 --log=stdout",
+    "icon": "🌐",
+    "autoStart": false,
+    "autoRestart": true,
+    "enabled": true
+  },
+  {
+    "id": "python-worker-demo",
+    "name": "Python Background Worker",
+    "category": "AI / Script",
+    "cwd": "./scripts",
+    "command": "python worker.py",
+    "icon": "⚙️",
+    "autoStart": false,
+    "autoRestart": false,
+    "enabled": false
+  }
+]
