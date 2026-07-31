@@ -150,7 +150,7 @@ const translations = {
   }
 };
 
-let currentLang = localStorage.getItem('bot_launchpad_lang') || 'en';
+let currentLang = localStorage.getItem('bot_launchpad_lang_v2') || 'en';
 
 function t(key, params = {}) {
   let str = (translations[currentLang] && translations[currentLang][key]) || (translations['en'][key]) || key;
@@ -195,7 +195,7 @@ function applyLanguage() {
 
 function toggleLanguage() {
   currentLang = currentLang === 'ru' ? 'en' : 'ru';
-  localStorage.setItem('bot_launchpad_lang', currentLang);
+  localStorage.setItem('bot_launchpad_lang_v2', currentLang);
   applyLanguage();
 }
 
