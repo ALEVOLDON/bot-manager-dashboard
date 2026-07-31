@@ -150,10 +150,10 @@ const translations = {
   }
 };
 
-let currentLang = localStorage.getItem('bot_launchpad_lang') || 'ru';
+let currentLang = localStorage.getItem('bot_launchpad_lang') || 'en';
 
 function t(key, params = {}) {
-  let str = (translations[currentLang] && translations[currentLang][key]) || (translations['ru'][key]) || key;
+  let str = (translations[currentLang] && translations[currentLang][key]) || (translations['en'][key]) || key;
   Object.keys(params).forEach(p => {
     str = str.replace(`{${p}}`, params[p]);
   });
