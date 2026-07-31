@@ -10,7 +10,7 @@
 
 A lightweight, modern **Windows Process Launcher & Live Control Panel** designed for running, monitoring, and managing local Telegram/Discord bots, background scripts, AI agents, and ngrok tunnels.
 
-![Bot Launchpad Dashboard](public/icon.png)
+![Bot Launchpad Dashboard Interface](public/preview.jpg)
 
 ## ✨ Features
 
