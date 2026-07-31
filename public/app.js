@@ -2,6 +2,203 @@ let services = [];
 let activeTerminalId = null;
 let ws = null;
 
+// i18n Dictionary
+const translations = {
+  ru: {
+    subtitle: "Центр управления ботами и скриптами Windows",
+    running: "Запущено",
+    total: "Всего",
+    addService: "Добавить новый бот / батник",
+    shutdownAll: "Выключить всё",
+    connectedProcesses: "Подключённые процессы и службы",
+    searchPlaceholder: "🔍 Поиск бота...",
+    loading: "Загрузка...",
+    activeSummary: "{running} активных / {total} всего",
+    terminalTitleDefault: "Консоль логов (Выберите процесс)",
+    terminalBannerDefault: "=== Нажмите \"Логи\" на карточке любого бота для трансляции в реальном времени ===",
+    autoscroll: "Автопрокрутка",
+    exportLogs: "Скачать (.log)",
+    copyLogs: "Копировать",
+    clearLogs: "Очистить",
+    logsCleared: "=== Логи очищены ===",
+    logsCopied: "✅ Скопировано!",
+    emptySearch: "Ничего не найдено по запросу",
+    // Statuses
+    statusRunning: "Работает",
+    statusCrashed: "⚠️ Краш",
+    statusStarting: "⏳ Запуск...",
+    statusDisabled: "🚫 Отключен",
+    statusStopped: "⏹️ Остановлен",
+    code: "Код:",
+    pid: "PID:",
+    // Card buttons
+    start: "Старт",
+    stop: "Стоп",
+    restart: "Перезапуск",
+    logs: "Логи",
+    env: ".env",
+    schedule: "Расписание:",
+    // Modals
+    addTitle: "Добавить процесс / батник",
+    editTitle: "Редактировать задачу",
+    nameLabel: "Название задачи / бота *",
+    namePlaceholder: "Например: Telegram Bot / Deploy Script",
+    iconLabel: "Иконка (Emoji)",
+    categoryLabel: "Категория",
+    categoryPlaceholder: "Telegram Bot, Batch Script, Python Service...",
+    commandLabel: "Команда запуска (Command) *",
+    commandPlaceholder: "npm start ИЛИ python bot.py ИЛИ cmd /c script.bat",
+    cwdLabel: "Рабочая директория (CWD)",
+    cwdPlaceholder: "C:\\Users\\username\\Desktop\\my-bot",
+    webhookLabel: "Webhook URL (уведомления в Discord / Telegram при крашах)",
+    webhookPlaceholder: "https://discord.com/api/webhooks/...",
+    scheduleLabel: "Время авто-запуска по расписанию (ЧЧ:ММ)",
+    autoRestartLabel: "Перезапускать автоматически при краше (Auto-restart)",
+    enabledLabel: "Включен",
+    cancel: "Отмена",
+    save: "Сохранить",
+    envModalTitle: "Редактор .env файлов",
+    saveEnv: "Сохранить .env",
+    envLoading: "Загрузка .env файла...",
+    envPath: "Путь к файлу:",
+    envDefaultContent: "# Введите переменные окружения в формате KEY=VALUE\n",
+    envSaved: "Файл .env успешно сохранён!",
+    envSaveError: "Ошибка сохранения .env: ",
+    confirmDelete: "Вы уверены, что хотите удалить \"{name}\" из списка?",
+    confirmShutdown: "Вы действительно хотите остановить всех запущенных ботов и полностью закрыть программу?",
+    logsNone: "=== Логи [{name}] пока отсутствуют ===",
+    logsError: "❌ Ошибка загрузки логов: ",
+    exportError: "Ошибка экспорта логов: ",
+    startError: "Ошибка запуска: ",
+    stopError: "Ошибка остановки: ",
+    restartError: "Ошибка перезапуска: ",
+    deleteError: "Ошибка удаления: ",
+    saveError: "Ошибка сохранения: ",
+    resizerTitle: "Зажмите и перетащите мышью для изменения ширины панелей"
+  },
+  en: {
+    subtitle: "Windows Bot & Script Control Center",
+    running: "Running",
+    total: "Total",
+    addService: "Add New Bot / Script",
+    shutdownAll: "Shutdown All",
+    connectedProcesses: "Connected Processes & Services",
+    searchPlaceholder: "🔍 Search process...",
+    loading: "Loading...",
+    activeSummary: "{running} active / {total} total",
+    terminalTitleDefault: "Log Console (Select a process)",
+    terminalBannerDefault: "=== Click \"Logs\" on any process card for live streaming ===",
+    autoscroll: "Autoscroll",
+    exportLogs: "Export (.log)",
+    copyLogs: "Copy",
+    clearLogs: "Clear",
+    logsCleared: "=== Logs cleared ===",
+    logsCopied: "✅ Copied!",
+    emptySearch: "No processes found matching",
+    // Statuses
+    statusRunning: "Running",
+    statusCrashed: "⚠️ Crashed",
+    statusStarting: "⏳ Starting...",
+    statusDisabled: "🚫 Disabled",
+    statusStopped: "⏹️ Stopped",
+    code: "Code:",
+    pid: "PID:",
+    // Card buttons
+    start: "Start",
+    stop: "Stop",
+    restart: "Restart",
+    logs: "Logs",
+    env: ".env",
+    schedule: "Schedule:",
+    // Modals
+    addTitle: "Add Bot / Process",
+    editTitle: "Edit Process",
+    nameLabel: "Process / Bot Name *",
+    namePlaceholder: "E.g., Telegram Bot / Deploy Script",
+    iconLabel: "Icon (Emoji)",
+    categoryLabel: "Category",
+    categoryPlaceholder: "Telegram Bot, Batch Script, Python Service...",
+    commandLabel: "Launch Command *",
+    commandPlaceholder: "npm start OR python bot.py OR cmd /c script.bat",
+    cwdLabel: "Working Directory (CWD)",
+    cwdPlaceholder: "C:\\Users\\username\\Desktop\\my-bot",
+    webhookLabel: "Webhook URL (Discord / Telegram crash alerts)",
+    webhookPlaceholder: "https://discord.com/api/webhooks/...",
+    scheduleLabel: "Scheduled Auto-Start Time (HH:MM)",
+    autoRestartLabel: "Auto-restart on crash",
+    enabledLabel: "Enabled",
+    cancel: "Cancel",
+    save: "Save",
+    envModalTitle: "Edit .env File",
+    saveEnv: "Save .env",
+    envLoading: "Loading .env file...",
+    envPath: "File path:",
+    envDefaultContent: "# Enter environment variables as KEY=VALUE\n",
+    envSaved: ".env file saved successfully!",
+    envSaveError: "Error saving .env: ",
+    confirmDelete: "Are you sure you want to delete \"{name}\"?",
+    confirmShutdown: "Are you sure you want to stop all bots and shutdown the control panel?",
+    logsNone: "=== No logs available for [{name}] yet ===",
+    logsError: "❌ Error loading logs: ",
+    exportError: "Error exporting logs: ",
+    startError: "Error starting: ",
+    stopError: "Error stopping: ",
+    restartError: "Error restarting: ",
+    deleteError: "Error deleting: ",
+    saveError: "Error saving: ",
+    resizerTitle: "Click and drag to resize panels"
+  }
+};
+
+let currentLang = localStorage.getItem('bot_launchpad_lang') || 'ru';
+
+function t(key, params = {}) {
+  let str = (translations[currentLang] && translations[currentLang][key]) || (translations['ru'][key]) || key;
+  Object.keys(params).forEach(p => {
+    str = str.replace(`{${p}}`, params[p]);
+  });
+  return str;
+}
+
+function applyLanguage() {
+  const langIndicator = document.getElementById('lang-indicator');
+  if (langIndicator) langIndicator.textContent = currentLang.toUpperCase();
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    el.textContent = t(key);
+  });
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    el.placeholder = t(key);
+  });
+
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.getAttribute('data-i18n-title');
+    el.title = t(key);
+  });
+
+  updateStats();
+  renderServices();
+  renderTerminalTabs();
+
+  if (activeTerminalId) {
+    const s = services.find(x => x.id === activeTerminalId);
+    if (s && terminalTitle) {
+      terminalTitle.textContent = `${s.icon || '⚡'} ${t('logs')}: ${s.name}`;
+    }
+  } else if (terminalTitle) {
+    terminalTitle.textContent = t('terminalTitleDefault');
+  }
+}
+
+function toggleLanguage() {
+  currentLang = currentLang === 'ru' ? 'en' : 'ru';
+  localStorage.setItem('bot_launchpad_lang', currentLang);
+  applyLanguage();
+}
+
 // DOM Elements
 const servicesGrid = document.getElementById('services-grid');
 const runningCountEl = document.getElementById('running-count');
@@ -20,6 +217,11 @@ const modalCloseBtn = document.getElementById('modal-close-btn');
 const modalCancelBtn = document.getElementById('modal-cancel-btn');
 const serviceForm = document.getElementById('service-form');
 const modalTitle = document.getElementById('modal-title');
+const btnLangToggle = document.getElementById('btn-lang-toggle');
+
+if (btnLangToggle) {
+  btnLangToggle.addEventListener('click', toggleLanguage);
+}
 
 // Initialize WebSocket connection
 function initWebSocket() {
@@ -61,7 +263,7 @@ function handleWebSocketMessage(data) {
     fetchServices();
   } else if (data.event === 'logs_cleared') {
     if (activeTerminalId === data.serviceId) {
-      terminalOutput.innerHTML = '<div class="log-line log-system">=== Логи очищены ===</div>';
+      terminalOutput.innerHTML = `<div class="log-line log-system">${t('logsCleared')}</div>`;
     }
   }
 }
@@ -90,7 +292,7 @@ function updateStats() {
 
   runningCountEl.textContent = running;
   totalCountEl.textContent = total;
-  servicesSummaryEl.textContent = `${running} активных / ${total} всего`;
+  servicesSummaryEl.textContent = t('activeSummary', { running, total });
 }
 
 let searchQuery = '';
@@ -118,7 +320,7 @@ if (btnExportLogs) {
       a.click();
       URL.revokeObjectURL(a.href);
     } catch (e) {
-      alert('Ошибка экспорта логов: ' + e.message);
+      alert(t('exportError') + e.message);
     }
   });
 }
@@ -159,7 +361,7 @@ function renderServices() {
   });
 
   if (filtered.length === 0) {
-    servicesGrid.innerHTML = `<div class="empty-state">Ничего не найдено по запросу "${escapeHtml(searchQuery)}"</div>`;
+    servicesGrid.innerHTML = `<div class="empty-state">${t('emptySearch')} "${escapeHtml(searchQuery)}"</div>`;
     return;
   }
 
@@ -175,15 +377,15 @@ function renderServices() {
 
     let statusPillHtml = '';
     if (status === 'running') {
-      statusPillHtml = `<span class="status-pill running"><span class="pulse-dot"></span> Работает (PID: ${s.state.pid})${ramStr}${uptimeStr}</span>`;
+      statusPillHtml = `<span class="status-pill running"><span class="pulse-dot"></span> ${t('statusRunning')} (${t('pid')} ${s.state.pid})${ramStr}${uptimeStr}</span>`;
     } else if (status === 'crashed') {
-      statusPillHtml = `<span class="status-pill crashed">⚠️ Краш (Код: ${s.state.exitCode})</span>`;
+      statusPillHtml = `<span class="status-pill crashed">${t('statusCrashed')} (${t('code')} ${s.state.exitCode})</span>`;
     } else if (status === 'starting') {
-      statusPillHtml = `<span class="status-pill starting">⏳ Запуск...</span>`;
+      statusPillHtml = `<span class="status-pill starting">${t('statusStarting')}</span>`;
     } else if (!s.enabled) {
-      statusPillHtml = `<span class="status-pill disabled">🚫 Отключен</span>`;
+      statusPillHtml = `<span class="status-pill disabled">${t('statusDisabled')}</span>`;
     } else {
-      statusPillHtml = `<span class="status-pill stopped">⏹️ Остановлен</span>`;
+      statusPillHtml = `<span class="status-pill stopped">${t('statusStopped')}</span>`;
     }
 
     const iconHtml = getLucideIconHtml(s.icon, s.category);
@@ -200,24 +402,26 @@ function renderServices() {
         ${statusPillHtml}
       </div>
 
-      <div class="card-cmd" title="${escapeHtml(s.command)}">
-        $> ${escapeHtml(s.command)}
+      <div class="card-command">
+        <code>${escapeHtml(s.command)}</code>
       </div>
+
+      ${s.scheduleTime ? `<div class="card-schedule">⏰ ${t('schedule')} ${escapeHtml(s.scheduleTime)}</div>` : ''}
 
       <div class="card-actions">
         <div class="action-btns">
           ${isRunning 
-            ? `<button class="btn btn-sm btn-danger-ghost" onclick="stopService('${s.id}')"><i data-lucide="square"></i> Стоп</button>`
-            : `<button class="btn btn-sm btn-primary" onclick="startService('${s.id}')" ${!s.enabled ? 'disabled' : ''}><i data-lucide="play"></i> Старт</button>`
+            ? `<button class="btn btn-sm btn-danger-ghost" onclick="stopService('${s.id}')"><i data-lucide="square"></i> ${t('stop')}</button>`
+            : `<button class="btn btn-sm btn-primary" onclick="startService('${s.id}')" ${!s.enabled ? 'disabled' : ''}><i data-lucide="play"></i> ${t('start')}</button>`
           }
-          <button class="btn btn-sm btn-ghost" onclick="restartService('${s.id}')"><i data-lucide="rotate-cw"></i> Перезапуск</button>
+          <button class="btn btn-sm btn-ghost" onclick="restartService('${s.id}')"><i data-lucide="rotate-cw"></i> ${t('restart')}</button>
         </div>
 
         <div class="action-btns">
           <button class="btn btn-sm ${isSelected ? 'btn-primary' : 'btn-ghost'}" onclick="selectTerminal('${s.id}')">
-            <i data-lucide="terminal"></i> Логи
+            <i data-lucide="terminal"></i> ${t('logs')}
           </button>
-          <button class="btn btn-sm btn-ghost" onclick="openEnvModal('${s.id}')"><i data-lucide="key"></i> .env</button>
+          <button class="btn btn-sm btn-ghost" onclick="openEnvModal('${s.id}')"><i data-lucide="key"></i> ${t('env')}</button>
           <button class="btn btn-sm btn-ghost" onclick="openEditModal('${s.id}')"><i data-lucide="settings"></i></button>
           <button class="btn btn-sm btn-danger-ghost" onclick="deleteService('${s.id}')"><i data-lucide="trash-2"></i></button>
         </div>
@@ -244,7 +448,7 @@ async function startService(id) {
     await fetch(`/api/services/${id}/start`, { method: 'POST' });
     selectTerminal(id);
   } catch (err) {
-    alert('Ошибка запуска: ' + err.message);
+    alert(t('startError') + err.message);
   }
 }
 
@@ -252,7 +456,7 @@ async function stopService(id) {
   try {
     await fetch(`/api/services/${id}/stop`, { method: 'POST' });
   } catch (err) {
-    alert('Ошибка остановки: ' + err.message);
+    alert(t('stopError') + err.message);
   }
 }
 
@@ -261,23 +465,23 @@ async function restartService(id) {
     await fetch(`/api/services/${id}/restart`, { method: 'POST' });
     selectTerminal(id);
   } catch (err) {
-    alert('Ошибка перезапуска: ' + err.message);
+    alert(t('restartError') + err.message);
   }
 }
 
 async function deleteService(id) {
   const s = services.find(x => x.id === id);
-  if (!confirm(`Вы уверены, что хотите удалить "${s ? s.name : id}" из списка?`)) return;
+  if (!confirm(t('confirmDelete', { name: s ? s.name : id }))) return;
 
   try {
     await fetch(`/api/services/${id}`, { method: 'DELETE' });
     if (activeTerminalId === id) {
       activeTerminalId = null;
-      terminalTitle.textContent = 'Консоль логов (Выберите процесс)';
+      terminalTitle.textContent = t('terminalTitleDefault');
       terminalOutput.innerHTML = '';
     }
   } catch (err) {
-    alert('Ошибка удаления: ' + err.message);
+    alert(t('deleteError') + err.message);
   }
 }
 
@@ -321,8 +525,8 @@ function closeTerminalTab(event, id) {
       selectTerminal(openTerminalTabs[openTerminalTabs.length - 1]);
     } else {
       activeTerminalId = null;
-      terminalTitle.textContent = 'Консоль логов (Выберите процесс)';
-      terminalOutput.innerHTML = '<div class="log-line log-system">=== Нажмите "Логи" на карточке любого бота ===</div>';
+      terminalTitle.textContent = t('terminalTitleDefault');
+      terminalOutput.innerHTML = `<div class="log-line log-system">${t('terminalBannerDefault')}</div>`;
       renderServices();
     }
   }
@@ -338,7 +542,7 @@ async function selectTerminal(id) {
   const s = services.find(x => x.id === id);
 
   if (s) {
-    terminalTitle.textContent = `${s.icon || '⚡'} Логи: ${s.name}`;
+    terminalTitle.textContent = `${s.icon || '⚡'} ${t('logs')}: ${s.name}`;
   }
   renderTerminalTabs();
   renderServices();
@@ -351,13 +555,13 @@ async function selectTerminal(id) {
 
     terminalOutput.innerHTML = '';
     if (!Array.isArray(logs) || logs.length === 0) {
-      terminalOutput.innerHTML = `<div class="log-line log-system">=== Логи [${escapeHtml(s ? s.name : id)}] пока отсутствуют ===</div>`;
+      terminalOutput.innerHTML = `<div class="log-line log-system">${t('logsNone', { name: s ? s.name : id })}</div>`;
     } else {
       logs.forEach(log => appendLogToTerminal(log));
     }
   } catch (err) {
     console.error('Failed to load logs:', err);
-    terminalOutput.innerHTML = `<div class="log-line log-error">❌ Ошибка загрузки логов: ${escapeHtml(err.message)}</div>`;
+    terminalOutput.innerHTML = `<div class="log-line log-error">${t('logsError')}${escapeHtml(err.message)}</div>`;
   }
 }
 
@@ -380,9 +584,14 @@ function appendLogToTerminal(log) {
 btnCopyLogs.addEventListener('click', () => {
   const text = terminalOutput.innerText;
   navigator.clipboard.writeText(text).then(() => {
-    const origText = btnCopyLogs.textContent;
-    btnCopyLogs.textContent = '✅ Скопировано!';
-    setTimeout(() => btnCopyLogs.textContent = origText, 1500);
+    const origText = btnCopyLogs.querySelector('span') ? btnCopyLogs.querySelector('span').textContent : btnCopyLogs.textContent;
+    const span = btnCopyLogs.querySelector('span');
+    if (span) span.textContent = t('logsCopied');
+    else btnCopyLogs.textContent = t('logsCopied');
+    setTimeout(() => {
+      if (span) span.textContent = t('copyLogs');
+      else btnCopyLogs.textContent = t('copyLogs');
+    }, 1500);
   });
 });
 
@@ -400,11 +609,11 @@ modalCloseBtn.addEventListener('click', closeModal);
 modalCancelBtn.addEventListener('click', closeModal);
 
 function openAddModal() {
-  modalTitle.textContent = 'Добавить бот / скрипт';
+  modalTitle.textContent = t('addTitle');
   document.getElementById('service-id').value = '';
   document.getElementById('form-name').value = '';
-  document.getElementById('form-icon').value = '🤖';
-  document.getElementById('form-category').value = 'Telegram Bot';
+  document.getElementById('form-icon').value = '⚡';
+  document.getElementById('form-category').value = '';
   document.getElementById('form-command').value = '';
   document.getElementById('form-cwd').value = '';
   document.getElementById('form-webhook').value = '';
@@ -418,7 +627,7 @@ function openEditModal(id) {
   const s = services.find(x => x.id === id);
   if (!s) return;
 
-  modalTitle.textContent = 'Редактировать задачу';
+  modalTitle.textContent = t('editTitle');
   document.getElementById('service-id').value = s.id;
   document.getElementById('form-name').value = s.name;
   document.getElementById('form-icon').value = s.icon || '⚡';
@@ -469,7 +678,7 @@ serviceForm.addEventListener('submit', async (e) => {
     closeModal();
     fetchServices();
   } catch (err) {
-    alert('Ошибка сохранения: ' + err.message);
+    alert(t('saveError') + err.message);
   }
 });
 
@@ -490,17 +699,17 @@ async function openEnvModal(id) {
   if (!s) return;
 
   envServiceIdInput.value = id;
-  envPathHint.textContent = `Загрузка .env файла...`;
+  envPathHint.textContent = t('envLoading');
   envEditorTextarea.value = '';
   envModal.classList.remove('hidden');
 
   try {
     const res = await fetch(`/api/services/${id}/env`);
     const data = await res.json();
-    envPathHint.textContent = `Путь к файлу: ${data.envPath}`;
-    envEditorTextarea.value = data.content || '# Введите переменные окружения в формате KEY=VALUE\n';
+    envPathHint.textContent = `${t('envPath')} ${data.envPath}`;
+    envEditorTextarea.value = data.content || t('envDefaultContent');
   } catch (err) {
-    envPathHint.textContent = 'Ошибка загрузки .env файла';
+    envPathHint.textContent = t('envSaveError');
   }
 }
 
@@ -518,10 +727,10 @@ if (envModalSaveBtn) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content })
       });
-      alert('Файл .env успешно сохранён!');
+      alert(t('envSaved'));
       closeEnvModal();
     } catch (err) {
-      alert('Ошибка сохранения .env: ' + err.message);
+      alert(t('envSaveError') + err.message);
     }
   });
 }
@@ -536,7 +745,7 @@ function escapeHtml(str) {
 const btnShutdownAll = document.getElementById('btn-shutdown-all');
 if (btnShutdownAll) {
   btnShutdownAll.addEventListener('click', async () => {
-    if (confirm('Вы действительно хотите остановить всех запущенных ботов и полностью закрыть программу?')) {
+    if (confirm(t('confirmShutdown'))) {
       try {
         await fetch('/api/shutdown', { method: 'POST' });
       } catch (e) {}
@@ -599,6 +808,7 @@ function initResizer() {
 }
 
 // Initial boot
+applyLanguage();
 fetchServices();
 initWebSocket();
 initResizer();

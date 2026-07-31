@@ -21,27 +21,30 @@
         <div class="logo-icon"><i data-lucide="cpu"></i></div>
         <div class="logo-text">
           <h1>Bot Launchpad</h1>
-          <span class="logo-subtitle">Центр управления ботами и скриптами Windows</span>
+          <span class="logo-subtitle" data-i18n="subtitle">Центр управления ботами и скриптами Windows</span>
         </div>
       </div>
 
       <div class="header-stats">
         <div class="stat-badge stat-running">
           <span class="stat-dot green"></span>
-          <span id="running-count">0</span> Запущено
+          <span id="running-count">0</span> <span data-i18n="running">Запущено</span>
         </div>
         <div class="stat-badge stat-total">
           <span class="stat-dot blue"></span>
-          <span id="total-count">0</span> Всего
+          <span id="total-count">0</span> <span data-i18n="total">Всего</span>
         </div>
       </div>
 
       <div class="header-actions">
+        <button class="btn btn-ghost" id="btn-lang-toggle" title="Switch Language / Сменить язык">
+          <i data-lucide="languages"></i> <span id="lang-indicator">RU</span>
+        </button>
         <button class="btn btn-primary" id="btn-add-service">
-          <i data-lucide="plus"></i> Добавить новый бот / батник
+          <i data-lucide="plus"></i> <span data-i18n="addService">Добавить новый бот / батник</span>
         </button>
         <button class="btn btn-danger-ghost" id="btn-shutdown-all" title="Остановить всех ботов и полностью закрыть панель">
-          <i data-lucide="power"></i> Выключить всё
+          <i data-lucide="power"></i> <span data-i18n="shutdownAll">Выключить всё</span>
         </button>
       </div>
     </header>
@@ -51,9 +54,9 @@
       <!-- Grid of Services -->
       <section class="services-section">
         <div class="section-title">
-          <h2>Подключённые процессы и службы</h2>
+          <h2 data-i18n="connectedProcesses">Подключённые процессы и службы</h2>
           <div class="section-title-right">
-            <input type="text" id="search-services" class="search-input" placeholder="🔍 Поиск бота...">
+            <input type="text" id="search-services" class="search-input" placeholder="🔍 Поиск бота..." data-i18n-placeholder="searchPlaceholder">
             <span class="section-badge" id="services-summary">Загрузка...</span>
           </div>
         </div>
@@ -64,7 +67,7 @@
       </section>
 
       <!-- Draggable Resizer Bar -->
-      <div class="resizer-bar" id="resizer-bar" title="Зажмите и перетащите мышью для изменения ширины панелей">
+      <div class="resizer-bar" id="resizer-bar" title="Зажмите и перетащите мышью для изменения ширины панелей" data-i18n-title="resizerTitle">
         <div class="resizer-handle"></div>
       </div>
 
@@ -79,22 +82,22 @@
             <span class="terminal-dot red"></span>
             <span class="terminal-dot yellow"></span>
             <span class="terminal-dot green"></span>
-            <span class="terminal-name" id="current-terminal-title">Консоль логов (Выберите процесс)</span>
+            <span class="terminal-name" id="current-terminal-title" data-i18n="terminalTitleDefault">Консоль логов (Выберите процесс)</span>
           </div>
 
           <div class="terminal-controls">
             <label class="autoscroll-toggle">
               <input type="checkbox" id="autoscroll-check" checked>
-              <span>Автопрокрутка</span>
+              <span data-i18n="autoscroll">Автопрокрутка</span>
             </label>
-            <button class="btn-sm btn-ghost" id="btn-export-logs"><i data-lucide="download"></i> Скачать (.log)</button>
-            <button class="btn-sm btn-ghost" id="btn-copy-logs"><i data-lucide="copy"></i> Копировать</button>
-            <button class="btn-sm btn-danger-ghost" id="btn-clear-logs"><i data-lucide="trash-2"></i> Очистить</button>
+            <button class="btn-sm btn-ghost" id="btn-export-logs"><i data-lucide="download"></i> <span data-i18n="exportLogs">Скачать (.log)</span></button>
+            <button class="btn-sm btn-ghost" id="btn-copy-logs"><i data-lucide="copy"></i> <span data-i18n="copyLogs">Копировать</span></button>
+            <button class="btn-sm btn-danger-ghost" id="btn-clear-logs"><i data-lucide="trash-2"></i> <span data-i18n="clearLogs">Очистить</span></button>
           </div>
         </div>
 
         <div class="terminal-body" id="terminal-output">
-          <div class="log-line log-system">=== Нажмите "Логи" на карточке любого бота для трансляции в реальном времени ===</div>
+          <div class="log-line log-system" data-i18n="terminalBannerDefault">=== Нажмите "Логи" на карточке любого бота для трансляции в реальном времени ===</div>
         </div>
       </section>
     </main>
@@ -103,7 +106,7 @@
     <div class="modal-backdrop hidden" id="service-modal">
       <div class="modal-card">
         <div class="modal-header">
-          <h3 id="modal-title">Добавить процесс / батник</h3>
+          <h3 id="modal-title" data-i18n="addTitle">Добавить процесс / батник</h3>
           <button class="modal-close" id="modal-close-btn">&times;</button>
         </div>
 
@@ -112,54 +115,54 @@
 
           <div class="form-row">
             <div class="form-group flex-2">
-              <label for="form-name">Название задачи / бота *</label>
-              <input type="text" id="form-name" placeholder="Например: Telegram Bot / Deploy Script" required>
+              <label for="form-name" data-i18n="nameLabel">Название задачи / бота *</label>
+              <input type="text" id="form-name" placeholder="Например: Telegram Bot / Deploy Script" data-i18n-placeholder="namePlaceholder" required>
             </div>
             <div class="form-group flex-1">
-              <label for="form-icon">Иконка (Emoji)</label>
+              <label for="form-icon" data-i18n="iconLabel">Иконка (Emoji)</label>
               <input type="text" id="form-icon" placeholder="🤖" value="⚡">
             </div>
           </div>
 
           <div class="form-group">
-            <label for="form-category">Категория</label>
-            <input type="text" id="form-category" placeholder="Telegram Bot, Batch Script, Python Service...">
+            <label for="form-category" data-i18n="categoryLabel">Категория</label>
+            <input type="text" id="form-category" placeholder="Telegram Bot, Batch Script, Python Service..." data-i18n-placeholder="categoryPlaceholder">
           </div>
 
           <div class="form-group">
-            <label for="form-command">Команда запуска (Command) *</label>
-            <input type="text" id="form-command" placeholder="npm start ИЛИ python bot.py ИЛИ cmd /c script.bat" required>
+            <label for="form-command" data-i18n="commandLabel">Команда запуска (Command) *</label>
+            <input type="text" id="form-command" placeholder="npm start ИЛИ python bot.py ИЛИ cmd /c script.bat" data-i18n-placeholder="commandPlaceholder" required>
           </div>
 
           <div class="form-group">
-            <label for="form-cwd">Рабочая директория (CWD)</label>
-            <input type="text" id="form-cwd" placeholder="C:\Users\username\Desktop\my-bot">
+            <label for="form-cwd" data-i18n="cwdLabel">Рабочая директория (CWD)</label>
+            <input type="text" id="form-cwd" placeholder="C:\Users\username\Desktop\my-bot" data-i18n-placeholder="cwdPlaceholder">
           </div>
 
           <div class="form-group">
-            <label for="form-webhook">Webhook URL (уведомления в Discord / Telegram при крашах)</label>
-            <input type="text" id="form-webhook" placeholder="https://discord.com/api/webhooks/...">
+            <label for="form-webhook" data-i18n="webhookLabel">Webhook URL (уведомления в Discord / Telegram при крашах)</label>
+            <input type="text" id="form-webhook" placeholder="https://discord.com/api/webhooks/..." data-i18n-placeholder="webhookPlaceholder">
           </div>
 
           <div class="form-group">
-            <label for="form-schedule">Время авто-запуска по расписанию (ЧЧ:ММ)</label>
+            <label for="form-schedule" data-i18n="scheduleLabel">Время авто-запуска по расписанию (ЧЧ:ММ)</label>
             <input type="time" id="form-schedule">
           </div>
 
           <div class="form-options">
             <label class="checkbox-option">
               <input type="checkbox" id="form-auto-restart" checked>
-              <span>Перезапускать автоматически при краше (Auto-restart)</span>
+              <span data-i18n="autoRestartLabel">Перезапускать автоматически при краше (Auto-restart)</span>
             </label>
             <label class="checkbox-option">
               <input type="checkbox" id="form-enabled" checked>
-              <span>Включен</span>
+              <span data-i18n="enabledLabel">Включен</span>
             </label>
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn btn-ghost" id="modal-cancel-btn">Отмена</button>
-            <button type="submit" class="btn btn-primary" id="modal-save-btn">Сохранить</button>
+            <button type="button" class="btn btn-ghost" id="modal-cancel-btn" data-i18n="cancel">Отмена</button>
+            <button type="submit" class="btn btn-primary" id="modal-save-btn" data-i18n="save">Сохранить</button>
           </div>
         </form>
       </div>
@@ -169,7 +172,7 @@
     <div class="modal-backdrop hidden" id="env-modal">
       <div class="modal-card">
         <div class="modal-header">
-          <h3 id="env-modal-title">Редактор .env файлов</h3>
+          <h3 id="env-modal-title" data-i18n="envModalTitle">Редактор .env файлов</h3>
           <button class="modal-close" id="env-modal-close-btn">&times;</button>
         </div>
 
@@ -180,8 +183,8 @@
             <textarea id="env-content-editor" class="env-editor-textarea" rows="12" placeholder="KEY=VALUE..."></textarea>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-ghost" id="env-modal-cancel-btn">Отмена</button>
-            <button type="button" class="btn btn-primary" id="env-modal-save-btn">Сохранить .env</button>
+            <button type="button" class="btn btn-ghost" id="env-modal-cancel-btn" data-i18n="cancel">Отмена</button>
+            <button type="button" class="btn btn-primary" id="env-modal-save-btn" data-i18n="saveEnv">Сохранить .env</button>
           </div>
         </div>
       </div>
