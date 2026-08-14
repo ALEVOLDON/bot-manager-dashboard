@@ -276,10 +276,10 @@ async function fetchServices() {
     updateStats();
     renderServices();
 
-    // Auto select first running or first service if no active terminal selected
+    // Auto select first running or first service in terminal without auto-switching page on initial load
     if (!activeTerminalId && services.length > 0) {
       const running = services.find(s => s.state && s.state.status === 'running');
-      selectTerminal(running ? running.id : services[0].id);
+      selectTerminal(running ? running.id : services[0].id, false);
     }
   } catch (err) {
     console.error('Failed to fetch services:', err);
@@ -534,7 +534,7 @@ function closeTerminalTab(event, id) {
 }
 
 // Select terminal to display logs
-async function selectTerminal(id) {
+async function selectTerminal(id, shouldSwitchPage = true) {
   if (!openTerminalTabs.includes(id)) {
     openTerminalTabs.push(id);
   }
@@ -546,6 +546,12 @@ async function selectTerminal(id) {
   }
   renderTerminalTabs();
   renderServices();
+
+  if (shouldSwitchPage && window.innerWidth <= 900 && typeof switchPage === 'function') {
+    switchPage('terminal');
+  }
+
+
 
   try {
     const res = await fetch(`/api/services/${id}/logs`);
@@ -812,3 +818,28 @@ applyLanguage();
 fetchServices();
 initWebSocket();
 initResizer();
+
+// Mobile 2-Page Tab Switcher (Page 1: Bots / Page 2: Logs)
+function switchPage(pageName) {
+  const btnServices = document.getElementById('nav-btn-services');
+  const btnTerminal = document.getElementById('nav-btn-terminal');
+  const servicesSec = document.querySelector('.services-section');
+  const terminalSec = document.querySelector('.terminal-section');
+
+  if (pageName === 'terminal') {
+    if (btnServices) btnServices.classList.remove('active');
+    if (btnTerminal) btnTerminal.classList.add('active');
+    if (servicesSec) servicesSec.classList.add('mobile-page-hidden');
+    if (terminalSec) terminalSec.classList.add('mobile-page-visible');
+  } else {
+    if (btnTerminal) btnTerminal.classList.remove('active');
+    if (btnServices) btnServices.classList.add('active');
+    if (terminalSec) terminalSec.classList.remove('mobile-page-visible');
+    if (servicesSec) servicesSec.classList.remove('mobile-page-hidden');
+  }
+}
+
+window.switchPage = switchPage;
+
+
+

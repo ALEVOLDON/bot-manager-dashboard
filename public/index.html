@@ -93,6 +93,7 @@
             <button class="btn-sm btn-ghost" id="btn-export-logs"><i data-lucide="download"></i> <span data-i18n="exportLogs">Export (.log)</span></button>
             <button class="btn-sm btn-ghost" id="btn-copy-logs"><i data-lucide="copy"></i> <span data-i18n="copyLogs">Copy</span></button>
             <button class="btn-sm btn-danger-ghost" id="btn-clear-logs"><i data-lucide="trash-2"></i> <span data-i18n="clearLogs">Clear</span></button>
+            <button class="btn-sm btn-ghost mobile-terminal-close" id="btn-close-mobile-terminal" onclick="closeMobileTerminal()"><i data-lucide="x"></i> <span>Закрыть</span></button>
           </div>
         </div>
 
@@ -101,6 +102,18 @@
         </div>
       </section>
     </main>
+
+    <!-- Mobile Bottom Navigation Bar (2 Pages: Processes / Logs) -->
+    <nav class="mobile-bottom-nav">
+      <button class="mobile-nav-btn active" id="nav-btn-services" onclick="switchPage('services')">
+        <i data-lucide="layout-grid"></i>
+        <span>Процессы</span>
+      </button>
+      <button class="mobile-nav-btn" id="nav-btn-terminal" onclick="switchPage('terminal')">
+        <i data-lucide="terminal"></i>
+        <span>Консоль логов</span>
+      </button>
+    </nav>
 
     <!-- Modal: Add / Edit Service -->
     <div class="modal-backdrop hidden" id="service-modal">

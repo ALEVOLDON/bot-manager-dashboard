@@ -31,6 +31,11 @@
   padding: 0;
 }
 
+html, body {
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
+}
+
 body {
   background-color: var(--bg-dark);
   background-image: 
@@ -769,3 +774,296 @@ svg[data-lucide],
   gap: 0.8rem;
   margin-top: 0.8rem;
 }
+
+/* ==========================================================================
+   MOBILE & TABLET RESPONSIVE STYLES
+   ========================================================================== */
+@media (max-width: 900px) {
+  .app-container {
+    height: auto;
+    min-height: 100vh;
+    padding: 0.8rem;
+    gap: 1rem;
+    overflow-y: auto;
+  }
+
+  .app-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .logo-group {
+    justify-content: flex-start;
+  }
+
+  .header-stats {
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.8rem;
+  }
+
+  .header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: stretch;
+  }
+
+  .header-actions .btn {
+    flex: 1 1 auto;
+    justify-content: center;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .main-layout {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .services-section {
+    flex: none;
+    width: 100%;
+  }
+
+  .resizer-bar {
+    display: none;
+  }
+
+  .terminal-section {
+    flex: none;
+    width: 100%;
+    height: 420px;
+    min-height: 320px;
+    max-height: 60vh;
+    border-radius: 12px;
+  }
+
+  .terminal-tabs-bar {
+    padding: 0.4rem 0.4rem 0 0.4rem;
+    gap: 0.3rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .terminal-tabs-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-item {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .terminal-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .terminal-title {
+    width: 100%;
+    justify-content: flex-start;
+    font-size: 0.8rem;
+  }
+
+  .terminal-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+  }
+
+  .terminal-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .autoscroll-toggle {
+    font-size: 0.75rem;
+    user-select: none;
+  }
+
+  .terminal-controls .btn-sm {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .terminal-body {
+    padding: 0.75rem;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    word-break: break-word;
+    white-space: pre-wrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .section-title {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+  }
+
+  .section-title-right {
+    width: 100%;
+
+    input {
+      width: 100%;
+    }
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .service-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .card-actions {
+    flex-wrap: wrap;
+    width: 100%;
+
+    .btn {
+      flex: 1;
+      justify-content: center;
+    }
+  }
+
+  .modal-box {
+    width: 95%;
+    max-height: 90vh;
+    padding: 1.2rem;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-text h1 {
+    font-size: 1.2rem;
+  }
+  
+  .logo-subtitle {
+    font-size: 0.75rem;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .terminal-section {
+    height: 360px;
+  }
+
+  .terminal-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+  }
+
+  .autoscroll-toggle {
+    grid-column: span 2;
+  }
+}
+
+/* Mobile Bottom Navigation Bar & 2-Page View Styles */
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .app-container {
+    padding-bottom: 75px;
+  }
+
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: rgba(12, 16, 26, 0.96);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border-color);
+    z-index: 10000;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  .mobile-nav-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 6px 24px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-nav-btn.active {
+    color: var(--accent-cyan);
+    font-weight: 600;
+    background: rgba(6, 182, 212, 0.12);
+  }
+
+  .mobile-nav-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Page 1 (Services) & Page 2 (Terminal) switching on mobile */
+  .services-section.mobile-page-hidden {
+    display: none !important;
+  }
+
+  .terminal-section {
+    display: none;
+  }
+
+  .terminal-section.mobile-page-visible {
+    display: flex !important;
+    width: 100%;
+    height: calc(100vh - 150px) !important;
+    min-height: 400px;
+  }
+
+  .mobile-terminal-close {
+    display: none !important;
+  }
+}
+
+
+
+
+
