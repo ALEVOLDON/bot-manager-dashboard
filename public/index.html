@@ -26,6 +26,18 @@
       </div>
 
       <div class="header-stats">
+        <div class="stat-badge stat-host" id="host-badge" title="Host Environment">
+          <span class="stat-dot blue"></span>
+          <span id="host-label">🖥️ PC Mode</span>
+        </div>
+        <div class="stat-badge stat-tvbox" id="tvbox-badge" title="TV Box Status">
+          <span class="stat-dot green" id="tvbox-dot"></span>
+          <span id="tvbox-label">H96 Max</span>
+        </div>
+        <div class="stat-badge stat-vault" id="vault-badge" title="Click to sync Obsidian Vault from TV Box" style="cursor: pointer;">
+          <i data-lucide="folder-sync" style="width: 14px; height: 14px;"></i>
+          <span id="vault-label">Obsidian (Syncing...)</span>
+        </div>
         <div class="stat-badge stat-running">
           <span class="stat-dot green"></span>
           <span id="running-count">0</span> <span data-i18n="running">Running</span>
@@ -37,6 +49,12 @@
       </div>
 
       <div class="header-actions">
+        <button class="btn btn-ghost" id="btn-remote-screen" title="Open Wireless Remote Control Screen (scrcpy)">
+          <i data-lucide="smartphone"></i> <span data-i18n="remoteScreen">Remote Screen</span>
+        </button>
+        <button class="btn btn-ghost" id="btn-sync-code" title="Push Code & Updates to TV Box">
+          <i data-lucide="upload-cloud"></i> <span data-i18n="pushCode">Sync to Box</span>
+        </button>
         <button class="btn btn-ghost" id="btn-lang-toggle" title="Switch Language / Сменить язык">
           <i data-lucide="languages"></i> <span id="lang-indicator">EN</span>
         </button>

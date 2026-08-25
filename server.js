@@ -472,12 +472,72 @@ app.post('/api/shutdown', (req, res) => {
   setTimeout(() => process.exit(0), 500);
 });
 
-// Clear logs for service
-app.post('/api/services/:id/clear-logs', (req, res) => {
-  serviceLogs.set(req.params.id, []);
-  broadcast({ event: 'logs_cleared', serviceId: req.params.id });
-  res.json({ success: true });
+// Unified Sync & System Endpoints
+const syncManager = require('./sync_manager.js');
+
+app.get('/api/system/status', async (req, res) => {
+  const isWin = process.platform === 'win32';
+  let tvboxOnline = false;
+  if (isWin) {
+    tvboxOnline = await syncManager.checkTvBoxOnline();
+  }
+  res.json({
+    host: isWin ? 'pc' : 'tvbox',
+    isWindows: isWin,
+    tvbox: {
+      ip: '192.168.0.102',
+      online: tvboxOnline,
+      ...syncManager.getLastSyncResult()
+    },
+    localPosts: syncManager.countLocalPosts()
+  });
 });
+
+app.post('/api/sync/vault', async (req, res) => {
+  broadcast({ event: 'sync_start', target: 'vault' });
+  const result = await syncManager.syncVaultFromBox();
+  broadcast({ event: 'vault_sync', ...result });
+  res.json(result);
+});
+
+app.post('/api/sync/code', async (req, res) => {
+  broadcast({ event: 'sync_start', target: 'code' });
+  const result = await syncManager.syncCodeToBox();
+  broadcast({ event: 'code_sync', ...result });
+  res.json(result);
+});
+
+app.post('/api/remote/screen', (req, res) => {
+  const result = syncManager.launchRemoteScreen();
+  res.json(result);
+});
+
+// Automated background sync loop for Windows PC
+if (process.platform === 'win32') {
+  setTimeout(async () => {
+    try {
+      const online = await syncManager.checkTvBoxOnline();
+      if (online) {
+        console.log('🔄 Initial background vault sync with TV Box...');
+        const r = await syncManager.syncVaultFromBox();
+        broadcast({ event: 'vault_sync', ...r });
+      }
+    } catch(e) {}
+  }, 5000);
+
+  setInterval(async () => {
+    try {
+      const online = await syncManager.checkTvBoxOnline();
+      if (online) {
+        const r = await syncManager.syncVaultFromBox();
+        if (r && (r.newPosts > 0 || r.updatedPosts > 0)) {
+          console.log(`📥 Auto-synced vault: ${r.newPosts} new, ${r.updatedPosts} updated`);
+          broadcast({ event: 'vault_sync', ...r });
+        }
+      }
+    } catch(e) {}
+  }, 90000);
+}
 
 // Clean shutdown handler for all spawned bot processes
 function cleanupAllProcesses() {

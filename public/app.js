@@ -74,10 +74,20 @@ const translations = {
     restartError: "Ошибка перезапуска: ",
     deleteError: "Ошибка удаления: ",
     saveError: "Ошибка сохранения: ",
-    resizerTitle: "Зажмите и перетащите мышью для изменения ширины панелей"
+    resizerTitle: "Зажмите и перетащите мышью для изменения ширины панелей",
+    pcMode: "🖥️ ПК (Windows)",
+    tvboxMode: "📺 H96 Max 24/7",
+    tvboxOnline: "H96 Max в сети",
+    tvboxOffline: "H96 Max оффлайн",
+    vaultSynced: "Obsidian ({count})",
+    vaultSyncing: "Обновление...",
+    remoteScreen: "Экран приставки",
+    pushCode: "Синхронизировать код",
+    syncSuccess: "✅ Obsidian синхронизирован! Новых заметок: {newPosts}",
+    codeSyncSuccess: "✅ Код успешно синхронизирован с ТВ-приставкой!"
   },
   en: {
-    subtitle: "Windows Bot & Script Control Center",
+    subtitle: "Unified Bot & Script Control Center",
     running: "Running",
     total: "Total",
     addService: "Add New Bot / Script",
@@ -95,6 +105,17 @@ const translations = {
     logsCleared: "=== Logs cleared ===",
     logsCopied: "✅ Copied!",
     emptySearch: "No processes found matching",
+    // Unified Environment
+    pcMode: "🖥️ PC Host",
+    tvboxMode: "📺 H96 Max 24/7",
+    tvboxOnline: "H96 Max Online",
+    tvboxOffline: "H96 Max Offline",
+    vaultSynced: "Obsidian ({count})",
+    vaultSyncing: "Syncing...",
+    remoteScreen: "Remote Screen",
+    pushCode: "Sync to Box",
+    syncSuccess: "✅ Obsidian Synced! New posts: {newPosts}",
+    codeSyncSuccess: "✅ Code synced to TV Box successfully!",
     // Statuses
     statusRunning: "Running",
     statusCrashed: "⚠️ Crashed",
@@ -265,6 +286,16 @@ function handleWebSocketMessage(data) {
     if (activeTerminalId === data.serviceId) {
       terminalOutput.innerHTML = `<div class="log-line log-system">${t('logsCleared')}</div>`;
     }
+  } else if (data.event === 'tvbox_status') {
+    updateTvBoxStatus(data.tvbox);
+  } else if (data.event === 'vault_sync') {
+    updateVaultStatus(data);
+    if (data.newPosts > 0) {
+      alert(t('syncSuccess', { newPosts: data.newPosts }));
+    }
+  } else if (data.event === 'sync_start') {
+    const vaultLabel = document.getElementById('vault-label');
+    if (vaultLabel) vaultLabel.textContent = t('vaultSyncing');
   }
 }
 
@@ -813,11 +844,107 @@ function initResizer() {
   window.addEventListener('touchend', stopDrag);
 }
 
+// System Status & Unified Sync Handlers
+async function fetchSystemStatus() {
+  try {
+    const res = await fetch('/api/system/status');
+    const data = await res.json();
+    
+    const hostLabel = document.getElementById('host-label');
+    if (hostLabel) {
+      hostLabel.textContent = data.isWindows ? t('pcMode') : t('tvboxMode');
+    }
+    
+    updateTvBoxStatus(data.tvbox);
+    updateVaultStatus({ totalPosts: data.localPosts, ...data.tvbox });
+  } catch (e) {
+    console.error('System status error:', e);
+  }
+}
+
+function updateTvBoxStatus(tvbox) {
+  const dot = document.getElementById('tvbox-dot');
+  const label = document.getElementById('tvbox-label');
+  const remoteBtn = document.getElementById('btn-remote-screen');
+  const syncCodeBtn = document.getElementById('btn-sync-code');
+
+  if (tvbox && tvbox.online) {
+    if (dot) dot.className = 'stat-dot green';
+    if (label) label.textContent = t('tvboxOnline');
+    if (remoteBtn) remoteBtn.style.display = 'inline-flex';
+    if (syncCodeBtn) syncCodeBtn.style.display = 'inline-flex';
+  } else {
+    if (dot) dot.className = 'stat-dot gray';
+    if (label) label.textContent = t('tvboxOffline');
+  }
+}
+
+function updateVaultStatus(data) {
+  const vaultLabel = document.getElementById('vault-label');
+  if (vaultLabel) {
+    const count = data.totalPosts || data.localPosts || 2859;
+    vaultLabel.textContent = t('vaultSynced', { count });
+  }
+}
+
+const vaultBadge = document.getElementById('vault-badge');
+if (vaultBadge) {
+  vaultBadge.addEventListener('click', async () => {
+    const label = document.getElementById('vault-label');
+    if (label) label.textContent = t('vaultSyncing');
+    try {
+      const res = await fetch('/api/sync/vault', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        alert(t('syncSuccess', { newPosts: data.newPosts || 0 }));
+      } else {
+        alert('Sync error: ' + (data.error || data.reason || 'failed'));
+      }
+      fetchSystemStatus();
+    } catch (e) {
+      alert('Sync error: ' + e.message);
+    }
+  });
+}
+
+const btnSyncCode = document.getElementById('btn-sync-code');
+if (btnSyncCode) {
+  btnSyncCode.addEventListener('click', async () => {
+    btnSyncCode.disabled = true;
+    try {
+      const res = await fetch('/api/sync/code', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        alert(t('codeSyncSuccess'));
+      } else {
+        alert('Code sync error: ' + (data.error || 'failed'));
+      }
+    } catch (e) {
+      alert('Code sync error: ' + e.message);
+    } finally {
+      btnSyncCode.disabled = false;
+    }
+  });
+}
+
+const btnRemoteScreen = document.getElementById('btn-remote-screen');
+if (btnRemoteScreen) {
+  btnRemoteScreen.addEventListener('click', async () => {
+    try {
+      await fetch('/api/remote/screen', { method: 'POST' });
+    } catch (e) {
+      alert('Remote screen error: ' + e.message);
+    }
+  });
+}
+
 // Initial boot
 applyLanguage();
 fetchServices();
 initWebSocket();
 initResizer();
+fetchSystemStatus();
+setInterval(fetchSystemStatus, 30000);
 
 // Mobile 2-Page Tab Switcher (Page 1: Bots / Page 2: Logs)
 function switchPage(pageName) {
