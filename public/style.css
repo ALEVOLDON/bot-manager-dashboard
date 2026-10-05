@@ -1063,6 +1063,178 @@ svg[data-lucide],
   }
 }
 
+/* ========================================================
+   TV Box & Compact Landscape Screen Optimization
+   (Optimized for 1080p @ 240 DPI / ~1280x640px viewport)
+   ======================================================== */
+@media (max-height: 820px), (max-width: 1280px) and (orientation: landscape) {
+  .app-container {
+    padding: 0.5rem 0.75rem !important;
+    gap: 0.5rem !important;
+    height: 100vh !important;
+  }
+
+  .app-header {
+    padding: 0.4rem 0.8rem !important;
+    border-radius: 12px !important;
+  }
+
+  .logo-group {
+    gap: 0.5rem !important;
+  }
+
+  .logo-icon {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 1rem !important;
+    border-radius: 8px !important;
+  }
+
+  .logo-icon svg[data-lucide] {
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+
+  .logo-text h1 {
+    font-size: 0.95rem !important;
+  }
+
+  .logo-subtitle {
+    display: none !important;
+  }
+
+  .header-stats {
+    gap: 0.35rem !important;
+  }
+
+  .stat-badge {
+    padding: 0.2rem 0.5rem !important;
+    font-size: 0.72rem !important;
+    border-radius: 12px !important;
+  }
+
+  .header-actions {
+    gap: 0.3rem !important;
+  }
+
+  .header-actions .btn {
+    padding: 0.3rem 0.6rem !important;
+    font-size: 0.75rem !important;
+    border-radius: 8px !important;
+  }
+
+  .main-layout {
+    grid-template-columns: var(--left-panel-width, 40%) 8px 1fr !important;
+    gap: 0.4rem !important;
+  }
+
+  .section-title {
+    margin-bottom: -0.2rem !important;
+  }
+
+  .section-title h2 {
+    font-size: 0.8rem !important;
+  }
+
+  .search-input {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.78rem !important;
+    width: 140px !important;
+  }
+
+  .services-grid {
+    gap: 0.45rem !important;
+    padding-right: 0.2rem !important;
+  }
+
+  /* Compact Service Cards */
+  .service-card {
+    padding: 0.5rem 0.7rem !important;
+    border-radius: 10px !important;
+    gap: 0.3rem !important;
+  }
+
+  .card-top {
+    gap: 0.3rem !important;
+  }
+
+  .card-info {
+    gap: 0.45rem !important;
+  }
+
+  .card-icon {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 1rem !important;
+    border-radius: 7px !important;
+  }
+
+  .card-icon svg[data-lucide] {
+    width: 0.95rem !important;
+    height: 0.95rem !important;
+  }
+
+  .card-title h3 {
+    font-size: 0.85rem !important;
+  }
+
+  .card-category {
+    font-size: 0.68rem !important;
+  }
+
+  .status-pill {
+    padding: 0.15rem 0.45rem !important;
+    font-size: 0.68rem !important;
+  }
+
+  .card-cmd {
+    font-size: 0.7rem !important;
+    padding: 0.2rem 0.45rem !important;
+  }
+
+  .card-actions {
+    margin-top: 0.05rem !important;
+  }
+
+  .card-actions .btn {
+    padding: 0.22rem 0.5rem !important;
+    font-size: 0.72rem !important;
+  }
+
+  /* Terminal Section */
+  .terminal-section {
+    border-radius: 10px !important;
+  }
+
+  .tab-item {
+    padding: 0.22rem 0.55rem !important;
+    font-size: 0.72rem !important;
+  }
+
+  .terminal-header {
+    padding: 0.3rem 0.65rem !important;
+  }
+
+  .terminal-title {
+    font-size: 0.75rem !important;
+  }
+
+  .terminal-controls {
+    gap: 0.25rem !important;
+  }
+
+  .terminal-controls .btn-sm {
+    padding: 0.2rem 0.45rem !important;
+    font-size: 0.7rem !important;
+  }
+
+  .terminal-body {
+    padding: 0.45rem 0.6rem !important;
+    font-size: 0.74rem !important;
+    line-height: 1.35 !important;
+  }
+}
+
 
 
 
