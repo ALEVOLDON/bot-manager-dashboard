@@ -256,7 +256,14 @@ function startService(serviceId) {
         crashCounts.set(serviceId, crashInfo);
 
         if (crashInfo.count >= 5) {
-          appendLog(serviceId, `⚠️ Process crashed ${crashInfo.count} times in a row. Auto-restart paused. Fix the issue and click Start manually.`, 'error');
+          appendLog(serviceId, `⚠️ Process crashed ${crashInfo.count} times in a row. Network or service temporarily unavailable. Backing off for 60 seconds before retrying...`, 'warning');
+          setTimeout(() => {
+            if (!activeProcesses.has(serviceId) && !manualStops.has(serviceId) && config.enabled) {
+              crashInfo.count = 0;
+              appendLog(serviceId, `Auto-restart retrying after backoff cooldown...`, 'system');
+              startService(serviceId);
+            }
+          }, 60000);
           return;
         }
 
@@ -485,7 +492,7 @@ app.get('/api/system/status', async (req, res) => {
     host: isWin ? 'pc' : 'tvbox',
     isWindows: isWin,
     tvbox: {
-      ip: '192.168.0.102',
+      ip: '192.168.0.103',
       online: tvboxOnline,
       ...syncManager.getLastSyncResult()
     },

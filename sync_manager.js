@@ -1,12 +1,34 @@
-﻿const { spawn, execSync } = require('child_process');
+const { spawn, execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-const ADB_PATH = path.join('C:', 'Users', 'alevo', 'Desktop', 'H96_Remote_Control', 'adb.exe');
-const SCRCPY_PATH = path.join('C:', 'Users', 'alevo', 'Desktop', 'H96_Remote_Control', 'scrcpy.exe');
-const SYNC_CODE_PY = path.join('C:', 'Users', 'alevo', 'Desktop', 'H96_TV_Box_Project', 'sync_all_to_box.py');
-const SYNC_POSTS_PY = path.join('C:', 'Users', 'alevo', 'Desktop', 'H96_TV_Box_Project', 'sync_posts_from_box.py');
-const LOCAL_POSTS_DIR = path.join('C:', 'Users', 'alevo', 'Desktop', 'obsidian_posts_smart_tags', 'posts');
+function resolveExistingPath(paths) {
+  for (const p of paths) {
+    if (fs.existsSync(p)) return p;
+  }
+  return paths[0];
+}
+
+const ADB_PATH = resolveExistingPath([
+  path.join('D:', '_CODE_2026_', 'H96_Remote_Control', 'adb.exe'),
+  path.join('C:', 'Users', 'alevo', 'Desktop', 'H96_Remote_Control', 'adb.exe')
+]);
+const SCRCPY_PATH = resolveExistingPath([
+  path.join('D:', '_CODE_2026_', 'H96_Remote_Control', 'scrcpy.exe'),
+  path.join('C:', 'Users', 'alevo', 'Desktop', 'H96_Remote_Control', 'scrcpy.exe')
+]);
+const SYNC_CODE_PY = resolveExistingPath([
+  path.join('D:', '_CODE_2026_', 'H96_TV_Box_Project', 'sync_all_to_box.py'),
+  path.join('C:', 'Users', 'alevo', 'Desktop', 'H96_TV_Box_Project', 'sync_all_to_box.py')
+]);
+const SYNC_POSTS_PY = resolveExistingPath([
+  path.join('D:', '_CODE_2026_', 'H96_TV_Box_Project', 'sync_posts_from_box.py'),
+  path.join('C:', 'Users', 'alevo', 'Desktop', 'H96_TV_Box_Project', 'sync_posts_from_box.py')
+]);
+const LOCAL_POSTS_DIR = resolveExistingPath([
+  path.join('D:', '_CODE_2026_', 'obsidian_posts_smart_tags', 'posts'),
+  path.join('C:', 'Users', 'alevo', 'Desktop', 'obsidian_posts_smart_tags', 'posts')
+]);
 
 let isSyncing = false;
 let lastSyncResult = { time: null, newPosts: 0, updatedPosts: 0, totalPosts: 0, status: 'idle' };
@@ -31,7 +53,7 @@ function countLocalPosts() {
   }
 }
 
-async function checkTvBoxOnline(boxIp = '192.168.0.102') {
+async function checkTvBoxOnline(boxIp = '192.168.0.103') {
   if (process.platform !== 'win32') return false;
   return new Promise((resolve) => {
     const child = spawn(ADB_PATH, ['connect', `${boxIp}:5555`], { timeout: 3000 });
@@ -126,10 +148,13 @@ async function syncCodeToBox() {
   });
 }
 
-function launchRemoteScreen(boxIp = '192.168.0.102') {
+function launchRemoteScreen(boxIp = '192.168.0.103') {
   if (process.platform !== 'win32') return { success: false };
   try {
-    const startScript = path.join('C:', 'Users', 'alevo', 'Desktop', 'H96_Remote_Control', 'start_remote.bat');
+    const startScript = resolveExistingPath([
+      path.join('D:', '_CODE_2026_', 'H96_Remote_Control', 'start_remote.bat'),
+      path.join('C:', 'Users', 'alevo', 'Desktop', 'H96_Remote_Control', 'start_remote.bat')
+    ]);
     spawn('cmd.exe', ['/c', startScript], {
       detached: true,
       stdio: 'ignore',
